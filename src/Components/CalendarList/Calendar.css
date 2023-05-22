@@ -1,0 +1,49 @@
+:root {
+    --fc-small-font-size: .85em;
+    --fc-page-bg-color: #fff;
+    --fc-neutral-bg-color: hsla(0,0%,82%,.3);
+    --fc-neutral-text-color: grey;
+    --fc-border-color: #ddd;
+    --fc-button-text-color: #fff;
+    --fc-button-bg-color: #B40C32;
+    --fc-button-border-color: #B40C32;
+    --fc-button-hover-bg-color: #B40C32;
+    --fc-button-hover-border-color: #B40C32;
+    --fc-button-active-bg-color: #B40C32;
+    --fc-button-active-border-color: #B40C32;
+    --fc-event-bg-color: #3788d8;
+    --fc-event-border-color: #3788d8;
+    --fc-event-text-color: #fff;
+    --fc-event-selected-overlay-color: rgba(0,0,0,.25);
+    --fc-more-link-bg-color: #d0d0d0;
+    --fc-more-link-text-color: inherit;
+    --fc-event-resizer-thickness: 8px;
+    --fc-event-resizer-dot-total-width: 8px;
+    --fc-event-resizer-dot-border-width: 1px;
+    --fc-non-business-color: hsla(0,0%,84%,.3);
+    --fc-bg-event-color: #8fdf82;
+    --fc-bg-event-opacity: 0.3;
+    --fc-highlight-color: rgba(188,232,241,.3);
+    --fc-today-bg-color: rgba(255,220,40,.15);
+    --fc-now-indicator-color: red;
+}
+
+.fc *{
+    font-size: 0.9rem !important;
+}
+.fc a{
+    color: #333;
+}
+
+.fc-toolbar-title{
+    font-size: 1.2rem !important;
+}
+.fc-daygrid-body{
+    width: 100% !important;
+}
+.fc-scrollgrid-sync-table{
+    width: 100% !important;
+}
+.fc-col-header{
+    width: 100% !important;
+}

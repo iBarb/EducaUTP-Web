@@ -4,13 +4,14 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import Login from '../Pages/Login/login';
-import Register from '../Pages/Register/Register';
 import Inicio from '../Pages/Dashboard/Inicio/inicio';
 import PrivateRouter from './PrivateRouter';
 import PublicRouter from './PublicRouter';
 import DarAsesoria from '../Pages/Dashboard/DarAsesoria/DarAsesoria';
 import RecibirAsesoria from '../Pages/Dashboard/RecibirAsesoria/RecibirAsesoria';
 import HistorialAsesoria from '../Pages/Dashboard/HistorialAsesoria/HistorialAsesoria';
+import Register from '../Pages/Register/register';
+import ForgotPassword from '../Pages/ForgotPassword/ForgotPassword';
 
 
 const router = createBrowserRouter([
@@ -38,9 +39,14 @@ const router = createBrowserRouter([
         element: <PublicRouter element={<Login />} />,
     },
     {
-        path: "/register",
+        path: "/registro",
         element: <PublicRouter element={<Register />} />,
     },
+    {
+        path: "/forgot/password",
+        element: <PublicRouter element={<ForgotPassword />} />,
+    },
+    
 ]);
 
 

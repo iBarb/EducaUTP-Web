@@ -1,0 +1,19 @@
+{
+    "name": "Educa UTP",
+    "short_name": "Educa UTP",
+    "description": "Bienvenid@s a Educa UTP App",
+    "background_color": "#fff",
+    "theme_color": "#000",
+    "orientation": "portrait",
+    "display": "standalone",
+    "start_url": "/?utm_source=web_app_manifest",
+    "scope": "/",
+    "lang": "es-mx",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}

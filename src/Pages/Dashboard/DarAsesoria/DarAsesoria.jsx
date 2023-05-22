@@ -2,9 +2,9 @@ import React from 'react';
 
 const DarAsesoria = () => {
     return (
-        <h1>
+        <div >
             Dar Asesoria
-        </h1>
+        </div>
     );
 }
 

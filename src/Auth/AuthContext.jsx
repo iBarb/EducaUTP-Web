@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail } from "firebase/auth";
+import { getFirestore, doc, getDocs, setDoc, collection, addDoc, updateDoc } from "firebase/firestore";
 import Swal from 'sweetalert2';
 import FirebaseApp from './FirebaseApp';
 import Loader from '../Components/Loader/Loader';
@@ -21,6 +22,7 @@ const Toast = Swal.mixin({
 
 
 const auth = getAuth(FirebaseApp);
+const db = getFirestore(FirebaseApp);
 
 
 
@@ -37,12 +39,69 @@ export function AuthProvider({ children }) {
     const [loading, setloading] = useState(false);
 
 
+
+
+    function SignUp(nombres, email, password) {
+        setloading(true)
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in
+                const uid = userCredential.user.uid;
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Inicio de sesión correcto'
+                })
+
+                //agregar datos del usuario
+                setDoc(doc(db, "usuarios", uid), {
+                    nombre: nombres,
+                    email: email,
+                    rol: "alumno",
+                    uid: uid,
+                });
+
+
+            }).catch((error) => {
+                // ..
+                setloading(null)
+            });
+
+    }
+
     function login(email, password) {
-        Toast.fire({
-            icon: 'success',
-            title: 'Inicio de sesión correcto'
-        })
-        setCurrentUser(true)
+        let errors = {
+            "auth/too-many-requests": "La cuenta fue bloqueada, intente mas tarde",
+            "auth/user-not-found": "El correo electronico no existe",
+            "auth/wrong-password": "La contraseña es incorrecta"
+        }
+        setloading(true)
+        if (email && password) {
+            signInWithEmailAndPassword(auth, email, password)
+                .then(async (data) => {
+
+                    let datos = await fetchDatosUser(data.user.uid);
+                    setCurrentUser(datos);
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Inicio de sesión correcto'
+                    })
+                })
+                .catch((error) => {
+                    Toast.fire({
+                        icon: 'error',
+                        title: errors[error.code]
+                    })
+
+                    setloading(false)
+
+                });
+        } else {
+            Toast.fire({
+                icon: 'error',
+                title: 'Todos los campos son obligatorios'
+            })
+            setloading(false)
+        }
     }
 
     function logOut() {
@@ -62,29 +121,65 @@ export function AuthProvider({ children }) {
             });
     }
 
-    useEffect(() => {
-        setloading(true)
-        onAuthStateChanged(auth, (user) => {
-            try {
-                if (user) {
-                    console.log(user);
-                } else {
-                    console.log("no hay sesion");
-                }
-                setloading(false)
-            } catch (error) {
-                console.log("error");
-                setloading(false)
+    async function fetchDatosUser(uid) {
+        const querySnapshot = await getDocs(collection(db, "usuarios"));
+        let datos = null;
+        querySnapshot.forEach((doc) => {
+            if (uid === doc.data().uid) {
+                datos = doc.data();
             }
         });
+        return datos;
+    }
+
+    useEffect(() => {
+        setloading(true);
+        const unsuscribe = onAuthStateChanged(auth, async (user) => {
+            try {
+                const uid = user.uid;
+                if (uid === user.uid) {
+                    let datos = await fetchDatosUser(uid);
+                    setCurrentUser(datos);
+                    setloading(null);
+
+                } else {
+                    setCurrentUser(null);
+                    setloading(null);
+                }
+            } catch (error) {
+                setCurrentUser(null);
+                setloading(null);
+            }
+        });
+
+        return unsuscribe;
     }, []);
 
+    function resetPassword(email) {
+        sendPasswordResetEmail(auth, email)
+            .then((e) => {
+                console.log(e);
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Se envió un correo para restablecer la contraseña'
+                })
+            })
+            .catch((error) => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Oops... Algo salió mal'
+                })
+            });
+    }
 
 
     const value = {
         currentUser,
         login,
-        logOut
+        logOut,
+        SignUp,
+        resetPassword
+
     }
 
     return (

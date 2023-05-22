@@ -1,0 +1,14 @@
+.header{
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 20px;
+}
+.menu-btn{
+    border: 1px solid #ffffff50;
+}
+
+.menu-btn:hover{
+    border: 1px solid #ffffff50;
+}
