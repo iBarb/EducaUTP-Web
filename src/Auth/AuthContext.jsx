@@ -172,13 +172,21 @@ export function AuthProvider({ children }) {
             });
     }
 
+    function alerta(icon, title) {
+        Toast.fire({
+            icon: icon,
+            title: title
+        })
+    }
+
 
     const value = {
         currentUser,
         login,
         logOut,
         SignUp,
-        resetPassword
+        resetPassword,
+        alerta
 
     }
 

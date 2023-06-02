@@ -71,7 +71,7 @@ const Sidebar = () => {
                 <hr />
                 <div className="dropdown">
                     <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
+                        <img src="https://media.discordapp.net/attachments/866837932907954229/1113654665230430278/user-img.png" alt="" width="32" height="32" className="rounded-circle me-2" />
                         <strong className='text-truncate'>{currentUser.nombre}</strong>
                     </a>
                     <ul className="dropdown-menu dropdown-menu-dark text-small shadow ">

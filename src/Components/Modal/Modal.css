@@ -1,0 +1,66 @@
+.out-modal {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, .5);
+    backdrop-filter: blur(3px);
+    z-index: 1050;
+}
+
+.modal {
+    display: block;
+    z-index: 1;
+
+}
+
+.modal-title {
+    color: var(--bg-dark);
+    font-weight: 700;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+.modal-footer {
+    border-top: none;
+}
+.fc-event-title{
+    text-overflow: ellipsis;
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        width: 90%;
+        max-width: 900px;
+    }
+}
+
+.div-asesorias {
+    border-top: rgba(0, 0, 0, .3) solid 1px;
+    border-bottom: rgba(0, 0, 0, .3) solid 1px;
+    padding: 10px 0;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+
+.div-asesorias .col:last-child {
+    max-width: max-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.div-asesorias h2 {
+    margin-bottom: 3px;
+    font-size: .9rem;
+}
+
+.div-asesorias p {
+    margin: 0;
+    font-size: .8rem;
+    color: #1D1B1C;
+}
