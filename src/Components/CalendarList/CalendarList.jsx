@@ -5,12 +5,9 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import FullCalendar from '@fullcalendar/react';
 import esLocale from '@fullcalendar/core/locales/es';
 import './Calendar.css'
-import { useAuth } from '../../Auth/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CalendarList = ({ data, ToggleModal, setEventId, isloading }) => {
-
-    const { currentUser } = useAuth()
+const CalendarList = ({ data, onclickEvent, isloading }) => {
 
     const calendarRef = useRef(null);
 
@@ -32,18 +29,9 @@ const CalendarList = ({ data, ToggleModal, setEventId, isloading }) => {
         };
     }, []);
 
-
-    const getBackgroundColor = (alumnos, currentUser) => {
-        if (alumnos.length === 5) {
-            return '#919191'
-        } else {
-            return alumnos.includes(currentUser.uid) ? '#00a8ff' : '#27a56a'
-        }
-    }
-
     const options = {
         plugins: [dayGridPlugin, listPlugin, timeGridPlugin],
-        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth',
+        initialView: window.innerWidth < 1113 ? 'listWeek' : 'dayGridMonth',
         locale: esLocale,
         dayHeaderFormat: { weekday: 'long' },
         titleFormat: { month: 'short', day: 'numeric' },
@@ -51,11 +39,10 @@ const CalendarList = ({ data, ToggleModal, setEventId, isloading }) => {
         noEventsContent: 'No hay asesorías para mostrar',
         events: data.map((e) => ({
             id: e.id,
-            title: e.curso_nombre,
-            start: new Date(e.inicio.seconds * 1000),
-            end: new Date(e.fin.seconds * 1000),
-            backgroundColor: getBackgroundColor(e.alumnos, currentUser),
-            datosEventos: e
+            title: e.title,
+            start: e.start,
+            end: e.end,
+            backgroundColor: e.backgroundColor
         })),
         eventTimeFormat: {
             hour: 'numeric',
@@ -64,8 +51,7 @@ const CalendarList = ({ data, ToggleModal, setEventId, isloading }) => {
             meridiem: 'short'
         },
         eventClick: function (info) {
-            ToggleModal(true)
-            setEventId(info.event.id);
+            onclickEvent(info)
         }
     };
     return (

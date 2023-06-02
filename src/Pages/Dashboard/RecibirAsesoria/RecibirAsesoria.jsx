@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import CalendarList from '../../../Components/CalendarList/CalendarList';
 import FirebaseApp from '../../../Auth/FirebaseApp';
-import { collection, doc, getDoc, getDocs, getFirestore, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getFirestore, onSnapshot, updateDoc } from 'firebase/firestore';
 import Modal from '../../../Components/Modal/Modal';
 import { obtenerHora } from '../../../Functions/Funciones';
-import { useAuth } from '../../../Auth/AuthContext';
-
-const db = getFirestore(FirebaseApp);
+import { db, useAuth } from '../../../Auth/AuthContext';
 
 const RecibirAsesoria = () => {
     const { currentUser, alerta } = useAuth()
 
-    const [CalendarData, setCalendarData] = useState([]);
+    const [CalendarData, setCalendarData] = useState(() => {
+        const AsesoriasData = localStorage.getItem("AsesoriasData");
+        return AsesoriasData ? JSON.parse(AsesoriasData) : [];
+    });
     const [ToggleModal, setToggleModal] = useState(false);
     const [isUpdating, setisUpdating] = useState(false);
     const [EventId, setEventId] = useState(null);
@@ -26,29 +27,53 @@ const RecibirAsesoria = () => {
         curso_nombre: '',
         curso: '',
         aula: '',
+        seccion: '',
         alumnos: [],
     });
-    const [loading, setLoading] = useState(true);
+
+    const [loading, setLoading] = useState(() => {
+        const AsesoriasData = localStorage.getItem("AsesoriasData");
+        return AsesoriasData ? false : true;
+    }
+    );
 
     useEffect(() => {
         let asesoriasRef = collection(db, "asesorias");
 
-
         onSnapshot(asesoriasRef, async (querySnapshot) => {
             let datos = [];
             for (const asesoriaDoc of querySnapshot.docs) {
-                const asesoriaData = asesoriaDoc.data();
-                const tutor_nombre = await getDoc(doc(db, "usuarios", asesoriaData.tutor));
-                const curso_nombre = await getDoc(doc(db, "cursos", asesoriaData.curso));
+                let asesoriaData = asesoriaDoc.data();
+                let tutorDoc = await getDoc(doc(db, "usuarios", asesoriaData.tutor));
+                let cursoDoc = await getDoc(doc(db, "cursos", asesoriaData.curso));
+                let seccionDoc = await getDoc(doc(db, "secciones", asesoriaData.seccion));
 
                 datos.push({
                     id: asesoriaDoc.id,
-                    tutor_nombre: tutor_nombre.data().nombre,
-                    curso_nombre: curso_nombre.data().nombre,
+                    tutor_nombre: tutorDoc.data().nombre,
+                    curso_nombre: cursoDoc.data().nombre,
+                    sede: seccionDoc.data().sede,
+                    inicio: seccionDoc.data().inicio,
+                    fin: seccionDoc.data().fin,
+                    aula: seccionDoc.data().aula,
                     ...asesoriaData,
+                    // datos hacer set a los eventos
+                    title: cursoDoc.data().nombre,
+                    start: new Date(seccionDoc.data().inicio.seconds * 1000),
+                    end: new Date(seccionDoc.data().fin.seconds * 1000),
+                    backgroundColor: getBackgroundColor(asesoriaData.alumnos, currentUser)
                 });
             }
-            setCalendarData(datos);
+
+            const newDataExists = JSON.stringify(datos) !== CalendarData;
+
+            if (newDataExists) {
+                // Guardar los nuevos datos en el Local Storage
+                localStorage.setItem("AsesoriasData", JSON.stringify(datos));
+
+                // Establecer los datos en el estado
+                setCalendarData(datos);
+            }
             setLoading(false);
         });
 
@@ -64,13 +89,22 @@ const RecibirAsesoria = () => {
 
     }, [EventId, CalendarData]);
 
+    const getBackgroundColor = (alumnos, currentUser) => {
+        if (alumnos.length === 5) {
+            return '#919191'
+        } else {
+            return alumnos.includes(currentUser.uid) ? '#00a8ff' : '#27a56a'
+        }
+    }
 
+    const OnClickEvent = (info) => { 
+        setToggleModal(true)
+        setEventId(info.event.id);
+    }
 
     const suscribeTutoria = async (id, alumnos_antiguos) => {
         setisUpdating(true)
         try {
-            console.log("ejecutandose");
-
             let asesoriasRef = doc(db, "asesorias", id);
 
             await updateDoc(asesoriasRef, {
@@ -80,8 +114,8 @@ const RecibirAsesoria = () => {
         } catch (error) {
 
             console.error("Error al inscribir la tutoría:", error.message);
-        } finally{
-            alerta("success", "Se actualizo correctamente")
+        } finally {
+            alerta("success", "Se inscribio a la asesoria")
         }
 
     };
@@ -89,7 +123,6 @@ const RecibirAsesoria = () => {
     const unsuscribeTutoria = async (id, alumnos) => {
         setisUpdating(true)
         try {
-            console.log("ejecutandose");
 
             let asesoriasRef = doc(db, "asesorias", id);
             let newArr = alumnos.filter(a => a !== currentUser.uid)
@@ -101,8 +134,8 @@ const RecibirAsesoria = () => {
         } catch (error) {
 
             console.error("Error al inscribir la tutoría:", error.message);
-        } finally{
-            alerta("success", "Se actualizo correctamente")
+        } finally {
+            alerta("info", "Se retiró de la asesoría")
         }
 
     };
@@ -114,8 +147,7 @@ const RecibirAsesoria = () => {
             <div className='content-dashboard'>
                 <CalendarList
                     data={CalendarData}
-                    ToggleModal={setToggleModal}
-                    setEventId={setEventId}
+                    onclickEvent={OnClickEvent}
                     isloading={loading}
                 />
                 <Modal

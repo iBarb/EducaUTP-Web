@@ -22,7 +22,7 @@ const Toast = Swal.mixin({
 
 
 const auth = getAuth(FirebaseApp);
-const db = getFirestore(FirebaseApp);
+export const db = getFirestore(FirebaseApp);
 
 
 
