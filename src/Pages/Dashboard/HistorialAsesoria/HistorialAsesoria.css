@@ -66,3 +66,23 @@
   .NoAsistio .loader-estado::before {
     background-color: #cc2121;
   }
+
+
+  .Data-notFound{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .Data-notFound i{
+    font-size: 5rem !important;
+    color: #808080;
+  }
+
+  .Data-notFound p{
+    color: #808080;
+  }
