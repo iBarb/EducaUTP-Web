@@ -220,7 +220,7 @@ const RecibirAsesoria = () => {
                                 :
                                 EventData.alumnos.some(alumno => alumno.uid === currentUser.uid) ?
                                     <button className='btn btn-info btn-sm' disabled={isUpdating || !compararFecha(EventData.inicio, 24)} onClick={() => unsuscribeTutoria(EventData.id, EventData.alumnos)}>
-                                        Restirarse  {/* Botón para cancelar la inscripción si el usuario ya está inscrito */}
+                                        Retirarse  {/* Botón para cancelar la inscripción si el usuario ya está inscrito */}
                                     </button>
                                     :
                                     <button className='btn btn-success btn-sm' disabled={isUpdating || compararFecha(EventData.inicio, 168)} onClick={() => suscribeTutoria(EventData.id, EventData.alumnos)}>
