@@ -72,8 +72,6 @@ const DarAsesoria = () => {
                     curso_nombre: cursoDoc.data().nombre,
                     aula_nombre: aulaDoc.data().nombre,
                     sede_nombre: sedeDoc.data().nombre,
-                    inicio: asesoriaData.inicio,
-                    fin: asesoriaData.fin,
                     ...asesoriaData,
                     // datos que se mostrarán en el calendario
                     title: cursoDoc.data().nombre,

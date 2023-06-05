@@ -73,14 +73,12 @@ const RecibirAsesoria = () => {
                     curso_nombre: cursoDoc.data().nombre,
                     aula_nombre: aulaDoc.data().nombre,
                     sede_nombre: sedeDoc.data().nombre,
-                    inicio: asesoriaData.inicio,
-                    fin: asesoriaData.fin,
                     ...asesoriaData,
                     // datos que se mostrarán en el calendario
                     title: cursoDoc.data().nombre,
                     start: new Date(asesoriaData.inicio.seconds * 1000 + asesoriaData.inicio.nanoseconds / 1000000),
                     end: new Date(asesoriaData.fin.seconds * 1000 + asesoriaData.fin.nanoseconds / 1000000),
-                    backgroundColor: getBackgroundColor(asesoriaData.inicio)
+                    backgroundColor: getBackgroundColor(asesoriaData.alumnos, asesoriaData.inicio, currentUser)
                 });
             }
 
