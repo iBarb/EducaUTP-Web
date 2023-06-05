@@ -57,13 +57,13 @@ const Sidebar = () => {
                         <li className="nav-item">
                             <NavLink to="/asesoria/brindar" className="nav-link" aria-current="page" title="Brindar asesoria" data-bs-toggle="tooltip" data-bs-placement="right">
                                 <i className="fa-solid fa-book"></i>
-                                <label>Brindar asesoria</label>
+                                <label>Mis asesorias</label>
                             </NavLink>
                         </li>
                         <li className="nav-item">
                             <NavLink to="/asesoria/historial" className="nav-link" aria-current="page" title="Historial asesoria" data-bs-toggle="tooltip" data-bs-placement="right">
                                 <i className="fa-solid fa-magnifying-glass"></i>
-                                <label>Historial asesoria</label>
+                                <label>Historial asesorias</label>
                             </NavLink>
                         </li>
                     </ul>

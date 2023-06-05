@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './Modal.css';
 
-const Modal = ({ isOpen, ToggleModal, title, children }) => {
+const Modal = ({ isOpen, ToggleModal, title, children, footer, isLoading }) => {
 
     const handleModalClose = () => {
         ToggleModal(!isOpen);
@@ -35,9 +35,18 @@ const Modal = ({ isOpen, ToggleModal, title, children }) => {
                                     <button type="button" className="btn-close" onClick={handleModalClose}></button>
                                 </div>
                                 <div className="modal-body">
-                                    {children}
+                                    {isLoading ?
+                                        <div className='w-100 centrar'>
+                                            <div class="spinner-border text-secondary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                        :
+                                        children
+                                    }
                                 </div>
-                                <div className="modal-footer">
+                                <div className="modal-footer" >
+                                    {footer}
                                 </div>
                             </div>
                         </motion.div>

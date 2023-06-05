@@ -5,7 +5,8 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import FullCalendar from '@fullcalendar/react';
 import esLocale from '@fullcalendar/core/locales/es';
 import './Calendar.css'
-import { motion, AnimatePresence } from 'framer-motion';
+import LoaderModulos from '../LoaderModulos/loaderModulos';
+
 
 const CalendarList = ({ data, onclickEvent, isloading }) => {
 
@@ -55,22 +56,13 @@ const CalendarList = ({ data, onclickEvent, isloading }) => {
         }
     };
     return (
-        <AnimatePresence>
-            {isloading ?
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className='loader-centrar'>
-                    <span className="loader_calendar"></span>
-                </motion.div>
-                :
-                <FullCalendar
-                    ref={calendarRef}
-                    {...options}
-                />
-            }
-        </AnimatePresence>
+        isloading ?
+            <LoaderModulos />
+            :
+            <FullCalendar
+                ref={calendarRef}
+                {...options}
+            />
     );
 }
 

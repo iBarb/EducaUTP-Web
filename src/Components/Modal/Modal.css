@@ -46,7 +46,8 @@
 }
 
 
-.div-asesorias .col:last-child {
+.div-asesorias .col:last-child ,
+.div-list .col:last-child{
     max-width: max-content;
     display: flex;
     flex-direction: column;
@@ -54,13 +55,38 @@
     align-items: flex-end;
 }
 
-.div-asesorias h2 {
+.div-asesorias h2,
+.div-list h2 {
     margin-bottom: 3px;
     font-size: .9rem;
 }
 
-.div-asesorias p {
+.div-asesorias p,
+.div-list p {
     margin: 0;
     font-size: .8rem;
     color: #1D1B1C;
+}
+.div-list {
+    margin: 20px 0;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px;
+    border-radius: 5px;
+    padding: 10px 0;
+    margin-right: 0;
+    margin-left: 0;
+}
+.div-asesorias i,
+.div-list i {
+    width: 18px;
+    text-align: center; 
+}
+
+.modal-footer{
+    font-size: 0.8rem;
+}
+
+.modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 0 16px;
 }
