@@ -7,30 +7,39 @@ import "./HistorialAsesoria.css"
 import LoaderModulos from '../../../Components/LoaderModulos/loaderModulos';
 
 const HistorialAsesoria = () => {
-    const { currentUser } = useAuth()
+    const { currentUser } = useAuth(); // Obtiene el usuario actual
 
     const [HistoryData, setHistoryData] = useState(() => {
+        // Obtener los datos de asesorías almacenados en el localStorage
         const SeccionesData = localStorage.getItem("HistoryData");
+        // Parsear los datos si existen, de lo contrario, establecer un arreglo vacío
         return SeccionesData ? JSON.parse(SeccionesData) : [];
     });
-    const [ToggleModal, setToggleModal] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [loadingModulo, setloadingModulo] = useState(true);
-    const [AlumnosData, setAlumnosData] = useState([]);
+
+    const [ToggleModal, setToggleModal] = useState(false); // Estado para controlar la apertura y cierre de un modal
+    const [loading, setLoading] = useState(true); // Estado para controlar la carga de datos
+    const [loadingModulo, setloadingModulo] = useState(true); // Estado para controlar la carga de un módulo específico
+    const [AlumnosData, setAlumnosData] = useState([]); // Estado para almacenar datos de alumnos
 
     useEffect(() => {
-        HistoryData.length > 0 && setTimeout(() => { setLoading(false) }, "500"); //Solucion error en DOM, problemas de renderizado
+        // Si HistoryData tiene elementos, se establece un temporizador para cambiar el estado de Loading a false después de 500 ms
+        HistoryData.length > 0 && setTimeout(() => { setLoading(false) }, "500"); 
 
-        let queryRef
+        let queryRef;
 
         if (currentUser.rol === "tutor") {
-            queryRef = query(collection(db, "asesorias"), where("tutor", "==", currentUser.uid))
+            queryRef = query(collection(db, "asesorias"), where("tutor", "==", currentUser.uid));
+            // Si el rol del usuario actual es "tutor", se crea una referencia a una consulta Firestore filtrada por tutor
         } else {
-            queryRef = where("alumnos", "array-contains-any", [{ asistio: true, uid: currentUser.uid }, { asistio: false, uid: currentUser.uid }])
+            queryRef = where("alumnos", "array-contains-any", [{ asistio: true, uid: currentUser.uid }, { asistio: false, uid: currentUser.uid }]);
+            // De lo contrario, se crea una referencia a una consulta Firestore filtrada por el uid del usuario actual
         }
 
+        // Suscribe una función a los cambios en una consulta Firestore
         const unsubscribe = onSnapshot(query(collection(db, "asesorias"), queryRef, where("inicio", "<=", new Date()), orderBy("inicio", "desc")), async (querySnapshot) => {
             const datos = [];
+
+            // Se recorre la colección de documentos obtenidos en la consulta y se obtienen datos adicionales de otros documentos relacionados
             for (const asesoriaDoc of querySnapshot.docs) {
                 let asesoriaData = asesoriaDoc.data();
                 let tutorDoc = await getDoc(doc(db, "usuarios", asesoriaData.tutor));
@@ -48,43 +57,46 @@ const HistorialAsesoria = () => {
                     fin: asesoriaData.fin,
                     ...asesoriaData,
                 });
-            };
+            }
 
-            const newDataExists = JSON.stringify(datos) !== HistoryData; // true o false
+            // Se verifica si hay nuevos datos comparando una representación en cadena de los datos con HistoryData
+            const newDataExists = JSON.stringify(datos) !== HistoryData;
 
             if (newDataExists) {
-                // Guardar los nuevos datos en el Local Storage
+                // Si hay nuevos datos, se guardan en el Local Storage
                 localStorage.setItem("HistoryData", JSON.stringify(datos));
 
-                // Establecer los datos en el estado
+                // Se establecen los nuevos datos en el estado HistoryData
                 setHistoryData(datos);
             }
+            // Se cambia el estado loadingModulo a false
             setloadingModulo(false);
         });
 
-        return () => unsubscribe();
+        return () => unsubscribe(); // Se realiza la función de limpieza al desmontar el componente
 
     }, []);
 
 
     const OpenModalMarcacion = async (alumnosArr) => {
-        setLoading(true)
-        setToggleModal(true)
-
-        let datos = [];
-
+        setLoading(true); // Establece el estado Loading a true, mostrando un indicador de carga
+        setToggleModal(true); // Establece el estado ToggleModal a true, mostrando un modal
+    
+        let datos = []; // Se inicializa un arreglo para almacenar los datos de los alumnos
+    
         for (const alumno of alumnosArr) {
             let alumno_nombre = (await getDoc(doc(db, "usuarios", alumno.uid))).data().nombre;
-
+            // Obtiene el nombre del alumno desde otro documento en la base de datos
+    
             datos.push({
                 nombre: alumno_nombre,
                 ...alumno
-            })
+            });
+            // Agrega los datos del alumno al arreglo datos
         }
-
-        setAlumnosData(datos);
-        setLoading(false)
-
+    
+        setAlumnosData(datos); // Establece el estado AlumnosData con los datos obtenidos
+        setLoading(false); // Establece el estado Loading a false, ocultando el indicador de carga
     }
 
     return (
@@ -94,8 +106,8 @@ const HistorialAsesoria = () => {
             </div>
             <div className='content-dashboard'>
                 {loadingModulo ?
-                    <LoaderModulos/>
-                :
+                    <LoaderModulos /> // Muestra un componente de carga mientras se está cargando el historial
+                    :
                     <>
                         <div className='px-0 px-sm-4'>
                             {HistoryData.map((asesoria) => {
@@ -106,22 +118,22 @@ const HistorialAsesoria = () => {
                                             <div className='col'>
                                                 <h2 >{asesoria.curso_nombre}</h2>
                                                 <p className='text-capitalize'><i className="fa-solid fa-chalkboard-user"></i> {asesoria.tutor_nombre}</p>
-                                                <p className='text-capitalize'><i className="fa-regular fa-clock"></i> {obtenerHora(asesoria.inicio.seconds)} - {obtenerHora(asesoria.fin.seconds)}</p>
+                                                <p className='text-capitalize'><i className="fa-regular fa-clock"></i> {obtenerHora(asesoria.inicio)} - {obtenerHora(asesoria.fin)}</p>
                                                 <p className='text-capitalize'><i className="fa-solid fa-building-columns"></i> {asesoria.aula_nombre} - {asesoria.sede_nombre}</p>
                                             </div>
                                             <div className='col'>
                                                 <p>
-                                                    <i className="fa-solid fa-calendar-days"></i> {obtenerFechaEnFormato(asesoria.inicio.seconds)}
+                                                    <i className="fa-solid fa-calendar-days"></i> {obtenerFechaEnFormato(asesoria.inicio)}
                                                 </p>
                                                 {
                                                     currentUser.rol === "tutor" ?
                                                         <button className='btn btn-primary btn-sm' onClick={() => OpenModalMarcacion(asesoria.alumnos)}>
                                                             Ver más
-                                                        </button>
+                                                        </button> // Botón para ver más detalles de la asesoría si el usuario es un tutor
                                                         :
                                                         <div className={`estado ${flagAsistio.asistio ? "Asistio" : "NoAsistio"}`}>
                                                             <span className="loader-estado"></span>{flagAsistio.asistio ? "Asistio" : "No asistio"}
-                                                        </div>
+                                                        </div> // Muestra el estado de asistencia del alumno si el usuario no es un tutor
                                                 }
                                             </div>
                                         </div>
@@ -129,8 +141,8 @@ const HistorialAsesoria = () => {
                                 )
                             })}
                         </div>
-
-                        {/* Modal para mostrar lso datos para mostrar la asistencia de los alumnos*/}
+    
+                        {/* Modal para mostrar los datos de la asistencia de los alumnos */}
                         <Modal
                             isOpen={ToggleModal}
                             ToggleModal={setToggleModal}
@@ -141,7 +153,7 @@ const HistorialAsesoria = () => {
                                 {AlumnosData.length === 0 ?
                                     <tr className='text-center'>
                                         <td className='col'></td>
-                                        <td className='col'>No hay alumnos registrados registrados</td>
+                                        <td className='col'>No hay alumnos registrados</td>
                                         <td className='col'></td>
                                     </tr>
                                     :
@@ -178,7 +190,7 @@ const HistorialAsesoria = () => {
                 }
             </div>
         </div>
-    );
+    );    
 }
 
 export default HistorialAsesoria;

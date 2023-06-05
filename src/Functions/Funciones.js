@@ -21,7 +21,7 @@ export function compararFecha(fechaComparar, limite = 0) {
 
   var fechaActual = new Date();
 
-  var fechaCompararObj = new Date(fechaComparar * 1000);
+  var fechaCompararObj = new Date(fechaComparar.seconds * 1000 + fechaComparar.nanoseconds / 1000000);
 
   var diferencia = fechaCompararObj.getTime() - fechaActual.getTime();
 
@@ -32,7 +32,7 @@ export function compararFecha(fechaComparar, limite = 0) {
 }
 
 export function obtenerFechaEnFormato(e) {
-  const fecha = new Date(e * 1000);
+  const fecha = new Date(e.seconds * 1000 + e.nanoseconds / 1000000);
   const dia = fecha.getDate();
   const mes = fecha.getMonth() + 1; // Los meses en JavaScript comienzan desde 0, por lo que se suma 1
   const anio = fecha.getFullYear().toString().slice(-2); // Obtener los últimos dos dígitos del año
