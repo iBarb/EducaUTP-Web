@@ -54,44 +54,46 @@ const RecibirAsesoria = () => {
 
         // Establecer un listener para obtener los datos de la colección "asesorias" en tiempo real
         const unsubscribe = onSnapshot(asesoriasRef, async (querySnapshot) => {
-            let datos = [];
+            // Obtener los documentos de la colección "asesorias"
+            const datos = await Promise.all(querySnapshot.docs.map(async (asesoriaDoc) => {
+                const asesoriaData = asesoriaDoc.data();
 
-            // Recorrer cada documento en el resultado de la consulta
-            for (const asesoriaDoc of querySnapshot.docs) {
-                let asesoriaData = asesoriaDoc.data();
+                // Obtener datos adicionales de otros documentos relacionados
+                const promises = [
+                    getDoc(doc(db, "usuarios", asesoriaData.tutor)),
+                    getDoc(doc(db, "cursos", asesoriaData.curso)),
+                    getDoc(doc(db, "aulas", asesoriaData.aula)),
+                    getDoc(doc(db, "sedes", asesoriaData.sede))
+                ];
 
-                // Obtener los datos del tutor, curso, aula y sede relacionados a la asesoría
-                let tutorDoc = await getDoc(doc(db, "usuarios", asesoriaData.tutor));
-                let cursoDoc = await getDoc(doc(db, "cursos", asesoriaData.curso));
-                let aulaDoc = await getDoc(doc(db, "aulas", asesoriaData.aula));
-                let sedeDoc = await getDoc(doc(db, "sedes", asesoriaData.sede));
+                //utiliza Promise.all() para ejecutar varias promesas en paralelo y esperar a que todas se resuelvan antes de continuar.
+                const [tutorDoc, cursoDoc, aulaDoc, sedeDoc] = await Promise.all(promises);
 
-                // Crear un objeto con los datos de la asesoría y otros datos relacionados
-                datos.push({
+                // Crear un objeto con los datos de la asesoría y los datos adicionales
+                return {
                     id: asesoriaDoc.id,
                     tutor_nombre: tutorDoc.data().nombre,
                     curso_nombre: cursoDoc.data().nombre,
                     aula_nombre: aulaDoc.data().nombre,
                     sede_nombre: sedeDoc.data().nombre,
                     ...asesoriaData,
-                    // datos que se mostrarán en el calendario
                     title: cursoDoc.data().nombre,
                     start: new Date(asesoriaData.inicio.seconds * 1000 + asesoriaData.inicio.nanoseconds / 1000000),
                     end: new Date(asesoriaData.fin.seconds * 1000 + asesoriaData.fin.nanoseconds / 1000000),
                     backgroundColor: getBackgroundColor(asesoriaData.alumnos, asesoriaData.inicio, currentUser)
-                });
-            }
+                };
+            }));
 
-            // Verificar si los nuevos datos son diferentes a los existentes en CalendarData
+            // Verificar si hay nuevos datos y actualizar CalendarData
             const newDataExists = JSON.stringify(datos) !== CalendarData;
 
             if (newDataExists) {
-                // Guardar los nuevos datos en el Local Storage
+                // Almacenar los datos en el almacenamiento local del navegador
                 localStorage.setItem("AsesoriasData", JSON.stringify(datos));
-
-                // Establecer los datos en el estado
+                // Actualizar el estado de CalendarData con los nuevos datos
                 setCalendarData(datos);
             }
+
             setLoading(false);
         });
 
@@ -113,8 +115,10 @@ const RecibirAsesoria = () => {
     }, [EventId, CalendarData]);
 
     const getBackgroundColor = (alumnos, fecha, currentUser) => {
-        // Verificar si la fecha es anterior a la fecha actual o si hay 5 alumnos inscritos y la fecha no es anterior a la fecha actual
-        if (!compararFecha(fecha) || (alumnos.length === 5 && !compararFecha(fecha))) {
+        if (compararFecha(fecha, 168)) {
+            return '#FF6D00'; // Color naranja si la fecha está dentro de los próximos 7 días (168 horas)
+        }else if (!compararFecha(fecha) || (alumnos.length === 5 && !compararFecha(fecha))) {
+            // Verificar si la fecha es anterior a la fecha actual o si hay 5 alumnos inscritos y la fecha no es anterior a la fecha actual
             return '#919191'// Color gris para indicar que la asesoría está pasada o llena
         } else {
             // Verificar si el usuario actual está incluido en la lista de alumnos
@@ -164,15 +168,14 @@ const RecibirAsesoria = () => {
         setisUpdating(true); // Establecer el estado de actualización a true
         try {
             let asesoriasRef = doc(db, "asesorias", id); // Referencia a la asesoría en la base de datos
-            let newArr = alumnos.filter(a => a !== currentUser.uid); // Crear un nuevo array sin el usuario actual
-
+            let newArr = alumnos.filter(a => a.uid !== currentUser.uid); // Crear un nuevo array sin el usuario actual
             await updateDoc(asesoriasRef, {
                 alumnos: newArr // Actualizar la lista de alumnos con el nuevo array
+            }).then(() => {
+                alerta("info", "Se retiró de la asesoría"); // Mostrar alerta informativa
             });
         } catch (error) {
             console.error("Error al inscribir la tutoría:", error.message); // Mostrar mensaje de error en la consola
-        } finally {
-            alerta("info", "Se retiró de la asesoría"); // Mostrar alerta informativa
         }
     };
 

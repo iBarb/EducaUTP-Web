@@ -53,20 +53,23 @@ const DarAsesoria = () => {
 
         // Establecer un observador en la consulta para recibir actualizaciones en tiempo real
         const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-            const datos = [];
+            // Obtener los documentos de la colección "asesorias"
+            const datos = await Promise.all(querySnapshot.docs.map(async (asesoriaDoc) => {
+                const asesoriaData = asesoriaDoc.data();
 
-            // Iterar sobre los documentos de las asesorías
-            for (const asesoriaDoc of querySnapshot.docs) {
-                let asesoriaData = asesoriaDoc.data();
+                // Obtener datos adicionales de otros documentos relacionados
+                const promises = [
+                    getDoc(doc(db, "usuarios", asesoriaData.tutor)),
+                    getDoc(doc(db, "cursos", asesoriaData.curso)),
+                    getDoc(doc(db, "aulas", asesoriaData.aula)),
+                    getDoc(doc(db, "sedes", asesoriaData.sede))
+                ];
 
-                // Obtener los datos del tutor, curso, aula y sede relacionados a la asesoría
-                let tutorDoc = await getDoc(doc(db, "usuarios", asesoriaData.tutor));
-                let cursoDoc = await getDoc(doc(db, "cursos", asesoriaData.curso));
-                let aulaDoc = await getDoc(doc(db, "aulas", asesoriaData.aula));
-                let sedeDoc = await getDoc(doc(db, "sedes", asesoriaData.sede));
+                //utiliza Promise.all() para ejecutar varias promesas en paralelo y esperar a que todas se resuelvan antes de continuar.
+                const [tutorDoc, cursoDoc, aulaDoc, sedeDoc] = await Promise.all(promises);
 
-                // Construir el objeto de datos para el evento de asesoría
-                datos.push({
+                // Crear un objeto con los datos de la asesoría y los datos adicionales
+                return {
                     id: asesoriaDoc.id,
                     tutor_nombre: tutorDoc.data().nombre,
                     curso_nombre: cursoDoc.data().nombre,
@@ -78,8 +81,8 @@ const DarAsesoria = () => {
                     start: new Date(asesoriaData.inicio.seconds * 1000 + asesoriaData.inicio.nanoseconds / 1000000),
                     end: new Date(asesoriaData.fin.seconds * 1000 + asesoriaData.fin.nanoseconds / 1000000),
                     backgroundColor: getBackgroundColor(asesoriaData.inicio)
-                });
-            }
+                };
+            }));
 
             // Verificar si los nuevos datos son diferentes a los existentes en CalendarData
             const newDataExists = JSON.stringify(datos) !== CalendarData;
@@ -129,24 +132,24 @@ const DarAsesoria = () => {
     const OpenModalMarcacion = async () => {
         setLoading2(true); // Establece el estado Loading2 a true, mostrando un indicador de carga
         setisUpdating(true); // Establece el estado isUpdating a true
-    
+
         setToggleModal2(true); // Establece el estado ToggleModal2 a true, mostrando otro modal para la marcacion
-    
+
         let datos = [];
         let alumnosArr = (await getDoc(doc(db, "asesorias", EventId))).data().alumnos;
         // Obtiene los datos de un documento en la base de datos utilizando el EventId como identificador
-    
+
         for (const alumno of alumnosArr) {
             let alumno_nombre = (await getDoc(doc(db, "usuarios", alumno.uid))).data().nombre;
             // Obtiene el nombre del alumno desde otro documento en la base de datos
-    
+
             datos.push({
                 nombre: alumno_nombre,
                 ...alumno
             });
             // Agrega los datos del alumno al arreglo datos
         }
-    
+
         setAlumnosData(datos); // Establece el estado AlumnosData con los datos obtenidos
         setLoading2(false); // Establece el estado Loading2 a false
         setisUpdating(false); // Establece el estado isUpdating a false
@@ -156,16 +159,16 @@ const DarAsesoria = () => {
         const updatedAlumnosData = [...AlumnosData];
         updatedAlumnosData[index].asistio = value;
         // Actualiza la propiedad asistio en el alumno correspondiente
-    
+
         setAlumnosData(updatedAlumnosData); // Establece el estado AlumnosData con los datos actualizados
     };
     const GuardarDatosMarcacion = async () => {
         setisUpdating(true); // Establece el estado isUpdating a true
-    
+
         try {
             let asesoriasRef = doc(db, "asesorias", EventId);
             // Crea una referencia al documento en la base de datos utilizando el EventId
-    
+
             let newArr = AlumnosData.map((item) => {
                 return {
                     uid: item.uid,
@@ -173,12 +176,12 @@ const DarAsesoria = () => {
                 };
             });
             // Crea un nuevo arreglo newArr mapeando los elementos de AlumnosData a el alumno con su uid y y su flag si asistio o no
-    
+
             await updateDoc(asesoriasRef, {
                 alumnos: newArr
             });
             // Actualiza el documento en la base de datos con el nuevo arreglo newArr
-    
+
             alerta("success", "Se actualizaron los datos"); // Muestra una alerta de éxito
             setisUpdating(false); // Establece el estado isUpdating a false
             setToggleModal2(false); // Establece el estado ToggleModal2 a false, cerrando el modal
