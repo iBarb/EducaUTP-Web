@@ -42,6 +42,11 @@ export function AuthProvider({ children }) {
 
 
     function SignUp(nombres, email, password) {
+        let errors = {
+            "auth/weak-password": "La contraseña debe tener al menos 6 caracteres",
+            "auth/email-already-in-use": "El correo electronico ya existe",
+        }
+
         setloading(true)
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
@@ -62,6 +67,11 @@ export function AuthProvider({ children }) {
 
 
             }).catch((error) => {
+                console.log(error.code);
+                Toast.fire({
+                    icon: 'error',
+                    title: errors[error.code]
+                })
                 // ..
                 setloading(null)
             });
