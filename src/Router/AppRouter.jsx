@@ -21,16 +21,16 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "asesoria/buscar",
-                element: <RecibirAsesoria />
+                element: <PrivateRouter flagAlumno={true} flagTutor={true} element={<RecibirAsesoria />}/>
             },
             {
                 path: "asesoria/brindar",
-                element: <DarAsesoria />
+                element: <PrivateRouter flagTutor={true} element={<DarAsesoria />}/>
             }
             ,
             {
                 path: "asesoria/historial",
-                element: <HistorialAsesoria />
+                element: <PrivateRouter flagAlumno={true} flagTutor={true} element={<HistorialAsesoria />}/>
             }
         ]
     },
