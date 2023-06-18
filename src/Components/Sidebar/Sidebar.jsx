@@ -5,6 +5,12 @@ import icono_logo from "../../assets/icono_logo.svg";
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../Auth/AuthContext';
 
+const links = [
+    { id: 1, name: 'Asesorias', icon: 'fa-solid fa-calendar-days', path: '/asesoria/buscar', access: ['alumno', 'tutor'] },
+    { id: 2, name: 'Mis asesorias', icon: 'fa-solid fa-book', path: '/asesoria/brindar', access: ['tutor'] },
+    { id: 3, name: 'Historial asesorias', icon: 'fa-solid fa-magnifying-glass', path: '/asesoria/historial', access: ['alumno', 'tutor'] },
+]
+
 const Sidebar = () => {
     const { logOut, currentUser } = useAuth()
     const [Collapse, setCollapse] = useState(true);
@@ -14,11 +20,12 @@ const Sidebar = () => {
 
         tooltipTriggerList.forEach(tooltipTriggerEl => {
             new bootstrap.Tooltip(tooltipTriggerEl, {
-                container: document.querySelector('.nav') // establecer el valor del atributo 'data-bs-container' al elemento activador
+                container: document.querySelector('.nav'), // establecer el valor del atributo 'data-bs-container' al elemento activador
+                trigger: 'hover' // Aparecerá el tooltip cuando se haga "hover" (sobre)
             })
         })
-
     }, []);
+
 
 
     return (
@@ -32,42 +39,27 @@ const Sidebar = () => {
                     <img className='logo_nombre' src={nombre_logo} height={35} alt="Logo" />
                 </Link>
                 <hr />
-                {currentUser.rol === 'alumno' ?
-                    <ul className="nav nav-pills flex-column mb-auto gap-2">
-                        <li className="nav-item">
-                            <NavLink to="/asesoria/buscar" className="nav-link" aria-current="page" title="Asesorias" data-bs-toggle="tooltip" data-bs-placement="right">
-                                <i className="fa-solid fa-calendar-days"></i>
-                                <label>Asesorias</label>
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink to="/asesoria/historial" className="nav-link" aria-current="page" title="Historial asesoria" data-bs-toggle="tooltip" data-bs-placement="right">
-                                <i className="fa-solid fa-magnifying-glass"></i>
-                                <label>Historial asesoria</label>
-                            </NavLink>
-                        </li>
-                    </ul> :
-                    <ul className="nav nav-pills flex-column mb-auto gap-2">
-                        <li className="nav-item">
-                            <NavLink to="/asesoria/buscar" className="nav-link" aria-current="page" title="Asesorias" data-bs-toggle="tooltip" data-bs-placement="right">
-                                <i className="fa-solid fa-calendar-days"></i>
-                                <label>Asesorias</label>
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink to="/asesoria/brindar" className="nav-link" aria-current="page" title="Brindar asesoria" data-bs-toggle="tooltip" data-bs-placement="right">
-                                <i className="fa-solid fa-book"></i>
-                                <label>Mis asesorias</label>
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink to="/asesoria/historial" className="nav-link" aria-current="page" title="Historial asesoria" data-bs-toggle="tooltip" data-bs-placement="right">
-                                <i className="fa-solid fa-magnifying-glass"></i>
-                                <label>Historial asesorias</label>
-                            </NavLink>
-                        </li>
-                    </ul>
-                }
+                <ul className="nav nav-pills flex-column mb-auto gap-2">
+                    {links.map((link) => {
+                        if (link.access.includes(currentUser.rol)) {
+                            return (
+                                <li className="nav-item" key={link.id}>
+                                    <NavLink
+                                        to={link.path}
+                                        className="nav-link"
+                                        aria-current="page"
+                                        title={link.name}
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="right"
+                                    >
+                                        <i className={link.icon}></i>
+                                        <label>{link.name}</label>
+                                    </NavLink>
+                                </li>
+                            );
+                        }
+                    })}
+                </ul>
                 <hr />
                 <div className="dropdown">
                     <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
