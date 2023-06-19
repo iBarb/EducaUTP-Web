@@ -1,0 +1,17 @@
+.dataTables_info{
+    font-size: 0.85rem;
+}
+.dataTables_length{
+    font-size: 0.85rem;
+}
+.dataTables_filter{
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+.dataTables_paginate *{
+    font-size: 0.85rem;
+}
+.table-responsive .table thead{
+    background-color: #B40C32;
+    color: #fff;
+}

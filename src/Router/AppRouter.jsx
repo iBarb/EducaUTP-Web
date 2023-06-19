@@ -12,6 +12,9 @@ import RecibirAsesoria from '../Pages/Dashboard/RecibirAsesoria/RecibirAsesoria'
 import HistorialAsesoria from '../Pages/Dashboard/HistorialAsesoria/HistorialAsesoria';
 import Register from '../Pages/Register/register';
 import ForgotPassword from '../Pages/ForgotPassword/ForgotPassword';
+import UsersList from '../Pages/Dashboard/UsersList/UsersList';
+import TutoringList from '../Pages/Dashboard/TutoringList/TutoringList';
+import CiclosList from '../Pages/Dashboard/CiclosList/CiclosList';
 
 
 const router = createBrowserRouter([
@@ -31,6 +34,19 @@ const router = createBrowserRouter([
             {
                 path: "asesoria/historial",
                 element: <PrivateRouter flagAlumno={true} flagTutor={true} element={<HistorialAsesoria />}/>
+            }
+            ,
+            {
+                path: "lista/usuarios",
+                element: <PrivateRouter flagAdmin={true} element={<UsersList />}/>
+            },
+            {
+                path: "lista/asesorias",
+                element: <PrivateRouter flagAdmin={true} element={<TutoringList />}/>
+            },
+            {
+                path: "lista/ciclos",
+                element: <PrivateRouter flagAdmin={true} element={<CiclosList />}/>
             }
         ]
     },

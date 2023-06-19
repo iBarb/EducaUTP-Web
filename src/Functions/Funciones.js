@@ -43,3 +43,16 @@ export function obtenerFechaEnFormato(e) {
 
   return diaFormateado + '/' + mesFormateado + '/' + anio;
 }
+
+export function obtenerFechaEnFormatoEnvio(e) {
+  const fecha = new Date(e.seconds * 1000 + e.nanoseconds / 1000000);
+  const dia = fecha.getDate();
+  const mes = fecha.getMonth() + 1; // Los meses en JavaScript comienzan desde 0, por lo que se suma 1
+  const anio = fecha.getFullYear().toString(); // Obtener los últimos dos dígitos del año
+
+  // Formatear los componentes de la fecha con ceros iniciales si son menores que 10
+  const diaFormateado = dia < 10 ? '0' + dia : dia;
+  const mesFormateado = mes < 10 ? '0' + mes : mes;
+
+  return anio + '-' + mesFormateado + '-' + diaFormateado;
+}

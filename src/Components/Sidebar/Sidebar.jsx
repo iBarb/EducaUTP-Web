@@ -9,6 +9,9 @@ const links = [
     { id: 1, name: 'Asesorias', icon: 'fa-solid fa-calendar-days', path: '/asesoria/buscar', access: ['alumno', 'tutor'] },
     { id: 2, name: 'Mis asesorias', icon: 'fa-solid fa-book', path: '/asesoria/brindar', access: ['tutor'] },
     { id: 3, name: 'Historial asesorias', icon: 'fa-solid fa-magnifying-glass', path: '/asesoria/historial', access: ['alumno', 'tutor'] },
+    { id: 4, name: 'Usuarios', icon: 'fa-solid fa-users', path: '/lista/usuarios', access: ['admin'] },
+    { id: 5, name: 'Asesorias', icon: 'fa-solid fa-chalkboard-user', path: 'lista/asesorias', access: ['admin'] },
+    { id: 6, name: 'Ciclos', icon: 'fa-solid fa-calendar-days', path: 'lista/ciclos', access: ['admin'] },
 ]
 
 const Sidebar = () => {
