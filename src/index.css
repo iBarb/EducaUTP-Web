@@ -89,6 +89,10 @@ body {
 
 }
 
+html.swal2-height-auto body.swal2-height-auto {
+    height: 100% !important;
+}
+
 #root {
     height: 100%;
     width: 100%;
@@ -160,6 +164,7 @@ body {
     width: 100%;
     max-height: 100%;
     padding: 0.5rem 1rem;
+    overflow-y: auto;
 }
 
 .div-input label{

@@ -15,6 +15,8 @@ import ForgotPassword from '../Pages/ForgotPassword/ForgotPassword';
 import UsersList from '../Pages/Dashboard/UsersList/UsersList';
 import TutoringList from '../Pages/Dashboard/TutoringList/TutoringList';
 import CiclosList from '../Pages/Dashboard/CiclosList/CiclosList';
+import AulasList from '../Pages/Dashboard/AulasList/AulasList';
+import CursosList from '../Pages/Dashboard/CursosList/CursosList';
 
 
 const router = createBrowserRouter([
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
             {
                 path: "lista/ciclos",
                 element: <PrivateRouter flagAdmin={true} element={<CiclosList />}/>
+            },
+            {
+                path: "lista/aulas",
+                element: <PrivateRouter flagAdmin={true} element={<AulasList />}/>
+            },
+            {
+                path: "lista/cursos",
+                element: <PrivateRouter flagAdmin={true} element={<CursosList />}/>
             }
         ]
     },

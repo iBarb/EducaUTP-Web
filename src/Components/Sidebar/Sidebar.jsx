@@ -12,6 +12,8 @@ const links = [
     { id: 4, name: 'Usuarios', icon: 'fa-solid fa-users', path: '/lista/usuarios', access: ['admin'] },
     { id: 5, name: 'Asesorias', icon: 'fa-solid fa-chalkboard-user', path: 'lista/asesorias', access: ['admin'] },
     { id: 6, name: 'Ciclos', icon: 'fa-solid fa-calendar-days', path: 'lista/ciclos', access: ['admin'] },
+    { id: 7, name: 'Aulas', icon: 'fas fa-chalkboard', path: 'lista/aulas', access: ['admin'] },
+    { id: 8, name: 'Cursos', icon: 'fas fa-book', path: 'lista/cursos', access: ['admin'] }
 ]
 
 const Sidebar = () => {
