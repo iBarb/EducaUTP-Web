@@ -178,7 +178,7 @@ const CiclosList = () => {
                 >
                     <div className='row'>
                         <div className="col-12 col-sm-6">
-                            <label htmlFor="nombre" className="form-label">Nombre: <span className='text-muted'>(Opcional)</span></label>
+                            <label htmlFor="nombre" className="form-label">Nombre: </label>
                             <input
                                 type="text"
                                 id='nombre'
@@ -189,7 +189,7 @@ const CiclosList = () => {
                             />
                         </div>
                         <div className="col-12 col-sm-6">
-                            <label htmlFor="anno" className="form-label">Año: <span className='text-muted'>(Opcional)</span></label>
+                            <label htmlFor="anno" className="form-label">Año: </label>
                             <input
                                 type="text"
                                 id='anno'
@@ -249,7 +249,7 @@ const CiclosList = () => {
                 >
                     <div className='row'>
                         <div className="col-12 col-sm-6">
-                            <label htmlFor="nombre" className="form-label">Nombre: <span className='text-muted'>(Opcional)</span></label>
+                            <label htmlFor="nombre" className="form-label">Nombre: </label>
                             <input
                                 type="text"
                                 id='nombre'
@@ -260,7 +260,7 @@ const CiclosList = () => {
                             />
                         </div>
                         <div className="col-12 col-sm-6">
-                            <label htmlFor="anno" className="form-label">Año: <span className='text-muted'>(Opcional)</span></label>
+                            <label htmlFor="anno" className="form-label">Año: </label>
                             <input
                                 type="text"
                                 id='anno'
