@@ -22,6 +22,7 @@ const HistorialAsesoria = () => {
     const [AlumnosData, setAlumnosData] = useState([]); // Estado para almacenar datos de alumnos
 
     useEffect(() => {
+        console.log(currentUser.uid);
         // Si HistoryData tiene elementos, se establece un temporizador para cambiar el estado de Loading a false después de 500 ms
         HistoryData.length > 0 && setTimeout(() => { setLoading(false) }, "500");
 

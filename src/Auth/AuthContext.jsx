@@ -88,13 +88,22 @@ export function AuthProvider({ children }) {
         if (email && password) {
             signInWithEmailAndPassword(auth, email, password)
                 .then(async (data) => {
-
+                    let uid = data.user.uid
                     let datos = await fetchDatosUser(data.user.uid);
-                    setCurrentUser(datos);
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Inicio de sesión correcto'
-                    })
+                    if (datos) {
+                        setCurrentUser(datos);
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Inicio de sesión correcto'
+                        })
+                    }else{
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'El usuario fue eliminado'
+                        })
+                        setloading(false)
+                    }
+
                 })
                 .catch((error) => {
                     Toast.fire({

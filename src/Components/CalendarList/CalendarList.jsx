@@ -23,6 +23,8 @@ const CalendarList = ({ data, onclickEvent, isloading }) => {
             }
         };
 
+        console.log(data);
+
         window.addEventListener('resize', handleResize);
 
         return () => {

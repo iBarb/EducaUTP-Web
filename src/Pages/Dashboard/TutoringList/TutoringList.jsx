@@ -129,7 +129,7 @@ const TutoringList = () => {
                     const [tutorDoc, cursoDoc, aulaDoc, sedeDoc, cicloDoc] = await Promise.all(
                         promises
                     );
-
+                    
                     // Crear un objeto con los datos de la asesoría y los datos adicionales
                     return {
                         id: asesoriaDoc.id,
@@ -164,6 +164,7 @@ const TutoringList = () => {
                 return grupos;
             }, {});
 
+            
             // Convertir los grupos en un array de objetos
             const gruposArray = Object.values(grupos);
             setDatos(datos);
